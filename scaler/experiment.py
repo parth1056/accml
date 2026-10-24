@@ -20,7 +20,7 @@ import numpy as np
 from scaler.fleet import LocalFleet, KubernetesFleet
 from scaler.forecast import Forecaster
 from scaler.gateway import Gateway
-from scaler.policy import Policy
+from scaler.policy import Policy, nonnegative_finite
 from scaler.traffic import Load, arrival_schedule
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -83,6 +83,7 @@ def summarize(load, snapshots, decisions, args):
     total_y=sum(y for _,y,_ in forecasts)
     cpu_available=all(s['cpu_total_seconds'] is not None for s in snapshots)
     return dict(backend=args.backend,policy=args.policy,scenario=args.scenario,seed=args.seed,
+        controller_mode=getattr(args,'mode','active'),
         duration_s=args.duration,warmup_s=args.warmup,scored_requests=len(records),
         success_fraction=len(successes)/len(records) if records else None,
         failure_fraction=errors/len(records) if records else None,
@@ -95,6 +96,7 @@ def summarize(load, snapshots, decisions, args):
         energy_proxy_wh=energy if cpu_available else allocation*10/3600,
         energy_method='assumed 10W allocated + 20W per measured CPU core' if cpu_available else 'allocation-only assumed 10W per replica',
         scaling_actions=sum(d['action']=='SCALE' for d in decisions if d['elapsed_s']>=args.warmup),
+        shadow_recommendations=sum(d['action']=='SHADOW' for d in decisions if d['elapsed_s']>=args.warmup),
         generator_capacity_drops=sum(r['status']==-1 for r in records),
         send_lag_p99_ms=percentile([r['send_lag_ms'] for r in records],99),
         forecast_mae_rps=float(np.mean([abs(p-y) for p,y,_ in forecasts])) if forecasts else None,
@@ -107,6 +109,9 @@ def summarize(load, snapshots, decisions, args):
 
 
 async def run_once(args):
+    mode=getattr(args,'mode','active')
+    if mode=='shadow' and (args.backend!='kubernetes' or args.command!='run'):
+        raise ValueError('Shadow mode attaches read-only to an existing Kubernetes deployment; use run --backend kubernetes.')
     stamp=datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')
     directory=ROOT/'output'/'live'/f'{stamp}-{args.backend}-{args.scenario}-{args.policy}-{uuid4().hex[:4]}'
     directory.mkdir(parents=True)
@@ -120,6 +125,7 @@ async def run_once(args):
     config['numpy_version']=np.__version__
     config['started_utc']=stamp
     config['workload']='real HTTP PBKDF2 CPU service; synthetic exogenous arrival schedule'
+    config['controller_mode']=mode
     (directory/'config.json').write_text(json.dumps(config,indent=2),encoding='utf-8')
     fleet=LocalFleet(directory/'workers',args.iterations,args.startup) if args.backend=='local' else KubernetesFleet()
     server=None
@@ -139,10 +145,13 @@ async def run_once(args):
     (directory/'config.json').write_text(json.dumps(config,indent=2),encoding='utf-8')
     load=None;task=None
     try:
-        await fleet.scale(1)
+        if mode=='active':
+            await fleet.scale(1)
         deadline=time.monotonic()+60
         while True:
             state=await fleet.status()
+            if mode=='shadow' and state['ready']>0:
+                break
             if state['desired']==1 and state['ready']==1 and state['pending']==0 and state['allocated']==1:
                 break
             if time.monotonic()>deadline:
@@ -159,7 +168,7 @@ async def run_once(args):
         task=asyncio.create_task(load.run(started))
         history=[];next_window=1;last_action=None
         state=await fleet.status()
-        if args.policy=='fixed' and policy.cap>1:
+        if mode=='active' and args.policy=='fixed' and policy.cap>1:
             await fleet.scale(policy.cap)
         while time.perf_counter()-started<args.duration:
             now=time.perf_counter()-started
@@ -169,21 +178,33 @@ async def run_once(args):
                 end=next_window*args.interval
                 telemetry=load.window(end-args.interval,end,now)
                 history.append(telemetry['offered_rps'])
-                forecast=model.predict(history)
+                forecast_error=''
+                try:
+                    forecast=model.predict(history)
+                    if forecast is not None and not nonnegative_finite(forecast):
+                        raise ValueError('Predictor returned a negative or non-finite demand')
+                except Exception as exc:
+                    # Inference failures must not stop the observed-demand path.
+                    forecast=None
+                    forecast_error=f'{type(exc).__name__}: {exc}'[:300]
                 desired,reason=policy.decide(end,telemetry['offered_rps'],forecast,model.buffer,state,
                     p95_ms=telemetry['p95_ms'],error_fraction=telemetry['error_fraction'],
-                    fresh=now-end<2*args.interval)
+                    fresh=now-end<2*args.interval,forecast_failed=bool(forecast_error))
                 action='HOLD';error=''
                 if desired!=state['desired']:
-                    try:
-                        await fleet.scale(desired)
-                        action='SCALE'
-                    except (RuntimeError,OSError) as exc:
-                        action='FAILED';error=str(exc)
+                    if mode=='shadow':
+                        action='SHADOW'
+                    else:
+                        try:
+                            await fleet.scale(desired)
+                            action='SCALE'
+                        except (RuntimeError,OSError) as exc:
+                            action='FAILED';error=str(exc)
                 decision=dict(elapsed_s=end,decision_lag_s=now-end,observed_rps=telemetry['offered_rps'],
                     forecast_rps=forecast,buffer_rps=model.buffer,target=desired,reason=reason,action=action,
                     ready=state['ready'],pending=state['pending'],desired=state['desired'],
-                    p95_ms=telemetry['p95_ms'],error_fraction=telemetry['error_fraction'],actuator_error=error)
+                    p95_ms=telemetry['p95_ms'],error_fraction=telemetry['error_fraction'],actuator_error=error,
+                    controller_mode=mode,forecast_error=forecast_error)
                 decisions.append(decision)
                 print(f"{args.policy:20} t={end:4.0f}s rps={telemetry['offered_rps']:5.1f} "
                       f"ready={state['ready']} pending={state['pending']} target={desired} {reason} {action}",flush=True)
@@ -214,7 +235,8 @@ async def run_once(args):
         save_csv(directory/'decisions.csv',decisions)
         if server is not None:
             server.close();await server.wait_closed()
-        await fleet.close()
+        if mode=='active':
+            await fleet.close()
 
 
 async def main(args):
@@ -262,6 +284,7 @@ def parser():
     p=argparse.ArgumentParser()
     p.add_argument('command',choices=['run','calibrate'])
     p.add_argument('--backend',choices=['local','kubernetes'],default='local')
+    p.add_argument('--mode',choices=['active','shadow'],default='active',help='shadow observes an existing Kubernetes service without changing replicas, including startup/cleanup')
     p.add_argument('--url',default='http://127.0.0.1:18080')
     p.add_argument('--policy',default='guarded_predictive',choices=['fixed','reactive','plain_predictive','guarded_predictive'])
     p.add_argument('--scenario',default='periodic',choices=['periodic','ramp','flash','constant'])

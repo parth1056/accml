@@ -46,7 +46,7 @@ def analyze(directory):
         ax.grid(alpha=.15);ax.legend(loc='upper left',fontsize=8)
     axes[0].set_ylabel('Requests/s');axes[1].set_ylabel('Real replicas');axes[2].set_ylabel('Latency (ms)')
     axes[2].set_xlabel('Wall-clock elapsed seconds (shaded = unscored warm-up)')
-    fig.suptitle(f"MEASURED HTTP RUN | {summary['backend']} | {summary['scenario']} | {summary['policy']}\nSynthetic arrivals; real service/latency/replica actions",fontsize=12)
+    fig.suptitle(f"MEASURED HTTP RUN | {summary['backend']} | {summary['scenario']} | {summary['policy']} | {summary.get('controller_mode','active')}\nSynthetic arrivals; real service/latency/replica observations",fontsize=12)
     fig.tight_layout();fig.savefig(directory/'measured_run.png',dpi=150);plt.close(fig)
     return summary
 
@@ -57,10 +57,12 @@ def main(args):
     for path in paths:
         result=analyze(path)
         if result['scenario']!='constant':
-            results.append(dict(run=path.name,**result))
+            results.append(dict({'run':path.name,'controller_mode':'active',
+                                 'shadow_recommendations':0},**result))
     if results:
         with (ROOT/'output'/'live'/'comparison.csv').open('w',newline='',encoding='utf-8') as f:
-            w=csv.DictWriter(f,fieldnames=list(results[0]));w.writeheader();w.writerows(results)
+            fields=list(dict.fromkeys(key for result in results for key in result))
+            w=csv.DictWriter(f,fieldnames=fields);w.writeheader();w.writerows(results)
     print(f'Plotted {len(paths)} measured runs; {len(results)} comparison rows.')
 
 

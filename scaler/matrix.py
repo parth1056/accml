@@ -9,6 +9,7 @@ from scaler.experiment import parser, run_once
 
 async def main(args):
     config=parser().parse_args(['run'])
+    config.mode='active'
     for name in ('backend','safe_rps','duration','warmup','iterations','startup','maximum'):
         setattr(config,name,getattr(args,name))
     combinations=[(scenario,seed,policy) for scenario in args.scenarios

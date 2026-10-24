@@ -1,0 +1,41 @@
+{
+  "source": "Frozen main matrix: four guarded runs; two scenarios x two seeds",
+  "horizon": "Peak actual offered RPS over the next three 10-second windows",
+  "moving_mean": "Mean of the last five completed observed windows; no future inputs",
+  "phase_rule": "Rising/falling if future peak differs from current observed RPS by more than max(2 RPS, 20%); otherwise stable. Evaluation labels only.",
+  "limitation": "Small synthetic replay suite; exploratory diagnostics, not model selection or production validation.",
+  "scores": {
+    "all": {
+      "targets": 64,
+      "mae_rps": {
+        "ridge_rps": 11.241866151236794,
+        "persistence_rps": 9.390625,
+        "moving_mean_5_rps": 12.0603125
+      }
+    },
+    "rising": {
+      "targets": 23,
+      "mae_rps": {
+        "ridge_rps": 16.984961767184195,
+        "persistence_rps": 15.608695652173914,
+        "moving_mean_5_rps": 13.799999999999999
+      }
+    },
+    "falling": {
+      "targets": 15,
+      "mae_rps": {
+        "ridge_rps": 5.992195431835521,
+        "persistence_rps": 9.76,
+        "moving_mean_5_rps": 15.908
+      }
+    },
+    "stable": {
+      "targets": 26,
+      "mae_rps": {
+        "ridge_rps": 9.190091598322516,
+        "persistence_rps": 3.6769230769230776,
+        "moving_mean_5_rps": 8.301538461538462
+      }
+    }
+  }
+}

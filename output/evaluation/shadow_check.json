@@ -1,0 +1,16 @@
+{
+  "run": "20261024T155329Z-kubernetes-constant-guarded_predictive-faa9",
+  "before": {
+    "generation": 81,
+    "replicas": 1
+  },
+  "after": {
+    "generation": 81,
+    "replicas": 1
+  },
+  "sampled_states": 78,
+  "all_sampled_desired_unchanged": true,
+  "scaling_actions": 0,
+  "shadow_recommendations": 7,
+  "note": "Dedicated local Kubernetes deployment; real HTTP load; shadow recommendations never applied. Separate from frozen main matrix."
+}
