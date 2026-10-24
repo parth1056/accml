@@ -5,3 +5,10 @@ __pycache__/
 credentials*
 tmp/
 runtime/
+output/evidence/*_frames/
+docs/
+output/ACC_Lab_CA_Project_Blueprint.pdf
+output/pilot_*
+output/live/calibration-kubernetes-initial.json
+output/live/20261024T135836Z-local-constant-fixed-415e/
+output/live/20261024T140454Z-kubernetes-constant-fixed-d7b6/

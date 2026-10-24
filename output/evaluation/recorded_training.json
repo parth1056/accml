@@ -1,0 +1,20 @@
+{
+  "training_rows": 32,
+  "validation_rows": 16,
+  "test_rows": 16,
+  "alpha": 1,
+  "candidate_test_mae_rps": 4.959061618283757,
+  "candidate_test_rmse_rps": 6.35967066389051,
+  "primary_test_mae_rps": 11.056678587477977,
+  "persistence_test_mae_rps": 10.65,
+  "promoted": false,
+  "notes": "Exploratory recorded-replay candidate with a small holdout. The 12-run benchmark still uses the original frozen synthetic-trained model. Traffic is synthetic replay measured through actual HTTP sends, not production traffic.",
+  "sources": {
+    "training": [
+      "20261024T143509Z-kubernetes-periodic-fixed-1b4c",
+      "20261024T143912Z-kubernetes-flash-fixed-fe48"
+    ],
+    "validation": "20261024T142701Z-kubernetes-periodic-fixed-0ee7",
+    "test": "20261024T150944Z-kubernetes-periodic-guarded_predictive-b7b9"
+  }
+}

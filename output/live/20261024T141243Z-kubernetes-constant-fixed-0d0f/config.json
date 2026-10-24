@@ -1,0 +1,33 @@
+{
+  "command": "run",
+  "backend": "kubernetes",
+  "url": "http://127.0.0.1:18080",
+  "policy": "fixed",
+  "scenario": "constant",
+  "safe_rps": 28.8,
+  "duration": 40.0,
+  "warmup": 10.0,
+  "interval": 10,
+  "maximum": 2,
+  "startup": 5,
+  "iterations": 60000,
+  "sla_ms": 250,
+  "stabilization": 30,
+  "hourly_rate": 0.02,
+  "hourly_budget": null,
+  "bias": 1,
+  "seed": 101,
+  "rates": [
+    5,
+    10,
+    20,
+    30
+  ],
+  "seconds": 30,
+  "code_sha256": "4f35ddcc9ef8c4ba77faa879974f604be4e3969dbbf60e1c26749703a998a3c4",
+  "python_version": "3.13.12",
+  "numpy_version": "2.5.2",
+  "started_utc": "20261024T141243Z",
+  "workload": "real HTTP PBKDF2 CPU service; synthetic exogenous arrival schedule",
+  "arrival_schedule_sha256": "8f257fc09963f3e3db48e124ca97d9fe145de4f31ab56b53b82dd790ea6623a8"
+}

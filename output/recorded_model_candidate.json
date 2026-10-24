@@ -1,0 +1,62 @@
+{
+  "algorithm": "standardized_ridge",
+  "alpha": 1,
+  "training_source": "recorded HTTP offered-demand traces, seed 101",
+  "safe_rps": 14.4,
+  "feature_windows": 6,
+  "target_peak_windows": 3,
+  "horizon_seconds": 30,
+  "forecast_bias": 1,
+  "buffer_rps": 0.42449758911558194,
+  "mean": [
+    129.42708333333331,
+    138.1618923611111,
+    147.30685763888886,
+    152.73003472222217,
+    153.7630208333333,
+    150.7552083333333,
+    145.35734953703704,
+    41.48364830700796,
+    198.78906249999986,
+    4.265624999999998
+  ],
+  "scale": [
+    57.34282753572295,
+    53.73324746215398,
+    53.3807889095568,
+    53.07000443359088,
+    53.11618095117089,
+    52.507419140448164,
+    33.098275830042404,
+    12.81221485046622,
+    23.931697763834467,
+    19.235705204677515
+  ],
+  "coefficients": [
+    165.09548611111114,
+    1.6293328003871965,
+    -0.12167258435087744,
+    2.0478013623838023,
+    -20.519444170302766,
+    -5.139109907083177,
+    22.446565061640637,
+    0.06485863551905575,
+    3.3517255447077545,
+    -3.0539187396902183,
+    11.2829827514741
+  ],
+  "persistence_validation_mae_rps": 9.75,
+  "validation_mae_rps": 4.589202884090305,
+  "validation_source": "20261024T142701Z-kubernetes-periodic-fixed-0ee7",
+  "test_source": "20261024T150944Z-kubernetes-periodic-guarded_predictive-b7b9",
+  "training_rows": 32,
+  "data_provenance": {
+    "training": [
+      "20261024T143509Z-kubernetes-periodic-fixed-1b4c",
+      "20261024T143912Z-kubernetes-flash-fixed-fe48"
+    ],
+    "validation": "20261024T142701Z-kubernetes-periodic-fixed-0ee7",
+    "test": "20261024T150944Z-kubernetes-periodic-guarded_predictive-b7b9"
+  },
+  "promoted": false
+}

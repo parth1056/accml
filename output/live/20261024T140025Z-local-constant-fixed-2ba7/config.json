@@ -1,0 +1,29 @@
+{
+  "command": "calibrate",
+  "backend": "local",
+  "url": "http://127.0.0.1:18080",
+  "policy": "fixed",
+  "scenario": "constant",
+  "safe_rps": 30.0,
+  "duration": 25.0,
+  "warmup": 5,
+  "interval": 10,
+  "maximum": 1,
+  "startup": 5,
+  "iterations": 60000,
+  "sla_ms": 250,
+  "stabilization": 30,
+  "hourly_rate": 0.02,
+  "hourly_budget": null,
+  "bias": 1,
+  "seed": 101,
+  "rates": [
+    5.0,
+    15.0,
+    30.0
+  ],
+  "seconds": 25.0,
+  "started_utc": "20261024T140025Z",
+  "workload": "real HTTP PBKDF2 CPU service; synthetic exogenous arrival schedule",
+  "arrival_schedule_sha256": "78d3f1ae352a32389249b300538ad743911ac8b7e2049f2c9b48c767070f7acf"
+}

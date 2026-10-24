@@ -1,0 +1,8 @@
+NAME                      READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS   IMAGES           SELECTOR
+deployment.apps/gateway   1/1     1            1           14m   gateway      acc-scaler:lab   app=gateway
+deployment.apps/worker    2/2     2            2           14m   worker       acc-scaler:lab   app=worker
+
+NAME                           READY   STATUS    RESTARTS   AGE     IP            NODE      NOMINATED NODE   READINESS GATES
+pod/gateway-855f7f845c-7hg7w   1/1     Running   0          6m47s   10.244.0.6    acc-lab   <none>           <none>
+pod/worker-84b8db798c-gvr42    1/1     Running   0          6m47s   10.244.0.7    acc-lab   <none>           <none>
+pod/worker-84b8db798c-wmdtf    1/1     Running   0          2m1s    10.244.0.12   acc-lab   <none>           <none>

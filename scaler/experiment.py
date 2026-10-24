@@ -12,6 +12,7 @@ import hashlib
 import json
 import math
 import platform
+import os
 from pathlib import Path
 import time
 from uuid import uuid4
@@ -23,6 +24,14 @@ from scaler.policy import Policy
 from scaler.traffic import Load, arrival_schedule
 
 ROOT=Path(__file__).resolve().parents[1]
+
+
+def environment_signature():
+    host=hashlib.sha256((platform.node()+'|'+platform.machine()+'|'+str(os.cpu_count())).encode()).hexdigest()
+    workload=hashlib.sha256()
+    for name in ('scaler/worker.py','scaler/net.py','Dockerfile','k8s/application.yaml'):
+        workload.update((ROOT/name).read_bytes())
+    return dict(host_fingerprint=host,workload_fingerprint=workload.hexdigest())
 
 
 def save_csv(path, rows):
@@ -102,6 +111,7 @@ async def run_once(args):
     directory=ROOT/'output'/'live'/f'{stamp}-{args.backend}-{args.scenario}-{args.policy}-{uuid4().hex[:4]}'
     directory.mkdir(parents=True)
     config=vars(args).copy()
+    config.update(environment_signature())
     code=hashlib.sha256()
     for source in sorted((ROOT/'scaler').glob('*.py')):
         code.update(source.name.encode());code.update(source.read_bytes())
@@ -222,9 +232,12 @@ async def main(args):
         # Retain earlier calibration passes and boundary repeats; comparison
         # runs and different CPU workloads must never contaminate calibration.
         all_results=[]
+        environment=environment_signature()
         for path in (ROOT/'output'/'live').glob('*/summary.json'):
             cfg=json.loads((path.parent/'config.json').read_text())
             if cfg.get('command')!='calibrate' or cfg.get('backend')!=args.backend or cfg.get('iterations')!=args.iterations:
+                continue
+            if any(cfg.get(key)!=value for key,value in environment.items()):
                 continue
             measured=json.loads(path.read_text())
             passed=(measured['p95_ms'] is not None and measured['p95_ms']<=args.sla_ms and
@@ -234,6 +247,7 @@ async def main(args):
         rates={r['rate_rps'] for r in all_results}
         passing=[rate for rate in rates if all(r['passed'] for r in all_results if r['rate_rps']==rate)]
         result=dict(backend=args.backend,iterations=args.iterations,sla_ms=args.sla_ms,
+                    **environment,
                     passing_rule='every repeated run: global p95 and all nonempty-window p95 <= SLA; success >=99%; valid generator',
                     highest_passing_rps=max(passing) if passing else None,
                     recommended_safe_rps=max(passing)*.8 if passing else None,points=all_results)

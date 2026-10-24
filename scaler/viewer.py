@@ -20,7 +20,7 @@ class Handler(BaseHTTPRequestHandler):
             latest={};decisions=[];resources=[];summaries=[]
             try:
                 latest=json.loads((LIVE/'latest.json').read_text(encoding='utf-8'))
-                directory=Path(latest['directory']).resolve()
+                directory=(LIVE/str(latest['directory']).replace('\\','/').rsplit('/',1)[-1]).resolve()
                 if directory.parent!=LIVE.resolve():
                     raise ValueError('Invalid experiment directory')
                 for filename,target in [('decisions.csv',decisions),('resources.csv',resources)]:

@@ -1,0 +1,3 @@
+elapsed_s,decision_lag_s,observed_rps,forecast_rps,buffer_rps,target,reason,action,ready,pending,desired,p95_ms,error_fraction,actuator_error
+10,0.20936380000011923,3.9,,0.3911169179391459,1,FIXED,HOLD,1,0,1,42.49009999989539,0.0,
+20,0.46158040000000256,2.9,,0.3911169179391459,1,FIXED,HOLD,1,0,1,19.897000000128173,0.0,

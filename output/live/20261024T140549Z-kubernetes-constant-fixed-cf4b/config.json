@@ -1,0 +1,30 @@
+{
+  "command": "calibrate",
+  "backend": "kubernetes",
+  "url": "http://127.0.0.1:18080",
+  "policy": "fixed",
+  "scenario": "constant",
+  "safe_rps": 6.0,
+  "duration": 30.0,
+  "warmup": 5,
+  "interval": 10,
+  "maximum": 1,
+  "startup": 5,
+  "iterations": 60000,
+  "sla_ms": 250,
+  "stabilization": 30,
+  "hourly_rate": 0.02,
+  "hourly_budget": null,
+  "bias": 1,
+  "seed": 101,
+  "rates": [
+    3.0,
+    6.0,
+    12.0,
+    18.0
+  ],
+  "seconds": 30.0,
+  "started_utc": "20261024T140549Z",
+  "workload": "real HTTP PBKDF2 CPU service; synthetic exogenous arrival schedule",
+  "arrival_schedule_sha256": "fb871007afdee83a01eaafbe50d493cbc8151462ed36bfa521d2e69c1c1dca7a"
+}

@@ -11,6 +11,8 @@ minikube image load acc-scaler:lab -p acc-lab
 if ($LASTEXITCODE -ne 0) { throw 'Image load failed.' }
 kubectl --kubeconfig $env:KUBECONFIG --context acc-lab apply -f k8s/application.yaml
 if ($LASTEXITCODE -ne 0) { throw 'Deployment failed.' }
+kubectl --kubeconfig $env:KUBECONFIG --context acc-lab -n acc-lab rollout restart deployment/worker deployment/gateway
+if ($LASTEXITCODE -ne 0) { throw 'Application rollout failed.' }
 kubectl --kubeconfig $env:KUBECONFIG --context acc-lab -n acc-lab rollout status deployment/worker --timeout=90s
 kubectl --kubeconfig $env:KUBECONFIG --context acc-lab -n acc-lab rollout status deployment/gateway --timeout=90s
 & (Join-Path $PSScriptRoot 'StartLabConnections.ps1')

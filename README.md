@@ -30,9 +30,17 @@ python -m scaler.experiment run --backend local --safe-rps 24 --duration 240 --w
 python -m unittest discover -s tests -v
 python -m scaler.matrix --backend kubernetes --safe-rps 14.4
 python -m scaler.analyze
+python tools/evaluate_matrix.py
+python tools/run_fault_checks.py
+python tools/train_recorded_candidate.py
+python tools/build_submission_report.py
 ```
 
 Each run saves arrivals, actual sends/completions, raw latency/errors, model coefficients, decisions, resource snapshots and summary metrics under output/live/. Identical scenario/seed/settings produce identical planned arrival schedules. Matrix order is randomized with a fixed seed. Warm-up is excluded from scored outcomes and preserved in raw data. Failed/aborted runs have no summary and are excluded from comparisons.
+
+The matrix evaluator verifies identical arrival schedules, model weights and source fingerprints before producing the comparison. Fault checks separately replay a deliberately zeroed forecast and a one-replica budget cap. Their summary scenario labels describe the injection; configs retain the underlying periodic workload. The report builder requires completed comparisons, fault checks and execution screenshots; it does not invent missing results. ReportLab is used only for this optional report export, not by the running service.
+
+An additional recorded-traffic model is saved as output/recorded_model_candidate.json. It uses distinct training/validation/test seeds, and remains an exploratory candidate: the published 12-run benchmark and default demo keep their original frozen model. Calibration retains only results from the same host and workload fingerprint; repeat boundary rates to confirm stability. Raw result files preserve their original bytes in Git so schedule/model hashes remain verifiable after download.
 
 ## Model and controller
 
@@ -45,4 +53,4 @@ Each run saves arrivals, actual sends/completions, raw latency/errors, model coe
 
 Application latency, errors, CPU and replica changes are measured. Traffic is synthetic replay, not production data. Cost uses an illustrative per-replica rate; energy uses assumed power and sampled process CPU. These are not actual cloud bills or measured physical energy. All pods share one laptop; the controller scales application replicas, not physical nodes. The reactive baseline is custom, not Kubernetes HPA. The separate planning_pilot/ outputs are simulations and must not be presented as live results.
 
-The earlier documents in docs/ are historical planning material. The working application is in scaler/ and k8s/.
+The working application is in scaler/ and k8s/. Completed results, the implementation PDF and captured demo footage are in output/.
