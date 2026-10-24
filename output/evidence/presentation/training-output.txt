@@ -1,0 +1,11 @@
+{
+  "model": "runtime/slides/trained_model.json",
+  "alpha": 10,
+  "training_rows": 8544,
+  "validation_rows": 4272,
+  "test_seed": 99,
+  "test_mae_rps": 1.6680945862010088,
+  "test_rmse_rps": 2.0711960026864644,
+  "persistence_test_mae_rps": 2.607807224945236,
+  "data_source": "synthetic traces; model-only holdout, not HTTP performance"
+}

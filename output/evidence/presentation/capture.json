@@ -1,0 +1,16 @@
+{
+  "presentation": "output/presentation/ACC_Lab_CA_Final.pptx",
+  "sha256": "2c0342a91634f944581eae87cb380f92e91d3228610af361965f9ca1f156bde6",
+  "template": "Creating_Empathy_Maps_and_Personas (1).pptx",
+  "slides": 24,
+  "main_slides": 21,
+  "appendix_slides": 3,
+  "walkthrough_run": "20261024T231509Z-kubernetes-flash-guarded_predictive-5ae1",
+  "sources": "The presentation walkthrough is separate from the frozen 12-run matrix. Fault screenshots use the documented seed-404 runs.",
+  "validation": "Package, font, slide-size and native-table checks passed. Every slide was exported by PowerPoint and visually inspected.",
+  "speaking_split": {
+    "Parth": "slides 1-7, about 2m45s",
+    "Purab": "slides 8-14, about 2m35s",
+    "Pushkar": "slides 15-21, about 2m40s"
+  }
+}

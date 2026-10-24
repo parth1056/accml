@@ -12,3 +12,5 @@ output/pilot_*
 output/live/calibration-kubernetes-initial.json
 output/live/20261024T135836Z-local-constant-fixed-415e/
 output/live/20261024T140454Z-kubernetes-constant-fixed-d7b6/
+output/live/20261024T231430Z-kubernetes-flash-guarded_predictive-fed1/
+output/live/20261024T231446Z-kubernetes-flash-guarded_predictive-df8c/

@@ -1,10 +1,10 @@
 {
-  "directory": "C:\\Users\\parth\\Desktop\\CS\\ACC Lab CA\\output\\live\\20261024T145123Z-kubernetes-periodic-guarded_predictive-0c67",
+  "directory": "C:\\Users\\parth\\Desktop\\CS\\ACC Lab CA\\output\\live\\20261024T231509Z-kubernetes-flash-guarded_predictive-5ae1",
   "backend": "kubernetes",
-  "elapsed_s": 230.0,
-  "decision_lag_s": 0.30327459999989514,
-  "observed_rps": 10.9,
-  "forecast_rps": 1.655167612305617,
+  "elapsed_s": 230,
+  "decision_lag_s": 0.775919199999862,
+  "observed_rps": 9.6,
+  "forecast_rps": 1.4915207856872321,
   "buffer_rps": 4.252402240216485,
   "target": 3,
   "reason": "STABLE_DOWNSCALE",
@@ -12,7 +12,9 @@
   "ready": 4,
   "pending": 0,
   "desired": 4,
-  "p95_ms": 26.294199999938428,
+  "p95_ms": 34.61689999994633,
   "error_fraction": 0.0,
-  "actuator_error": ""
+  "actuator_error": "",
+  "controller_mode": "active",
+  "forecast_error": ""
 }

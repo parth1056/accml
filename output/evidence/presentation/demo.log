@@ -1,0 +1,25 @@
+guarded_predictive   t=  10s rps=  8.2 ready=1 pending=0 target=1 MODEL_WARMUP HOLD
+guarded_predictive   t=  20s rps= 15.1 ready=1 pending=0 target=2 MODEL_WARMUP SCALE
+guarded_predictive   t=  30s rps= 26.1 ready=2 pending=0 target=3 MODEL_WARMUP SCALE
+guarded_predictive   t=  40s rps= 30.4 ready=3 pending=0 target=3 MODEL_WARMUP HOLD
+guarded_predictive   t=  50s rps= 39.9 ready=3 pending=0 target=4 MODEL_WARMUP SCALE
+guarded_predictive   t=  60s rps= 39.4 ready=4 pending=0 target=4 PREDICTIVE HOLD
+guarded_predictive   t=  70s rps= 42.6 ready=4 pending=0 target=4 PREDICTIVE HOLD
+guarded_predictive   t=  80s rps= 33.8 ready=4 pending=0 target=4 DOWNSCALE_WAIT HOLD
+guarded_predictive   t=  90s rps= 27.4 ready=4 pending=0 target=4 DOWNSCALE_WAIT HOLD
+guarded_predictive   t= 100s rps= 17.6 ready=4 pending=0 target=4 DOWNSCALE_WAIT HOLD
+guarded_predictive   t= 110s rps= 15.3 ready=4 pending=0 target=3 STABLE_DOWNSCALE SCALE
+guarded_predictive   t= 120s rps= 35.9 ready=3 pending=0 target=4 PREDICTIVE SCALE
+guarded_predictive   t= 130s rps= 37.5 ready=4 pending=0 target=4 CAPACITY_LIMITED HOLD
+guarded_predictive   t= 140s rps= 44.3 ready=4 pending=0 target=4 CAPACITY_LIMITED HOLD
+guarded_predictive   t= 150s rps= 33.9 ready=4 pending=0 target=4 DOWNSCALE_WAIT HOLD
+guarded_predictive   t= 160s rps= 31.0 ready=4 pending=0 target=4 DOWNSCALE_WAIT HOLD
+guarded_predictive   t= 170s rps= 42.0 ready=4 pending=0 target=4 PREDICTIVE HOLD
+guarded_predictive   t= 180s rps= 44.6 ready=4 pending=0 target=4 PREDICTIVE HOLD
+guarded_predictive   t= 190s rps= 40.8 ready=4 pending=0 target=4 PREDICTIVE HOLD
+guarded_predictive   t= 200s rps= 35.1 ready=4 pending=0 target=4 DOWNSCALE_WAIT HOLD
+guarded_predictive   t= 210s rps= 28.9 ready=4 pending=0 target=4 DOWNSCALE_WAIT HOLD
+guarded_predictive   t= 220s rps= 17.8 ready=4 pending=0 target=4 DOWNSCALE_WAIT HOLD
+guarded_predictive   t= 230s rps=  9.6 ready=4 pending=0 target=3 STABLE_DOWNSCALE SCALE
+RESULT {"backend": "kubernetes", "policy": "guarded_predictive", "scenario": "flash", "seed": 707, "controller_mode": "active", "duration_s": 240.0, "warmup_s": 60.0, "scored_requests": 5447, "success_fraction": 1.0, "failure_fraction": 0.0, "p50_ms": 18.708600000081788, "p95_ms": 49.694799999997464, "p99_ms": 98.95754199996188, "sla_violating_window_fraction": 0.0, "replica_seconds": 708.8577166999996, "estimated_cost": 0.003938098426111109, "cost_unit": "illustrative currency units; not an AWS bill", "measured_worker_cpu_seconds": 51.63983620900251, "mean_worker_cpu_utilization": 0.29139746943522293, "energy_proxy_wh": 2.255937191994457, "energy_method": "assumed 10W allocated + 20W per measured CPU core", "scaling_actions": 3, "shadow_recommendations": 0, "generator_capacity_drops": 0, "send_lag_p99_ms": 15.864154315837878, "forecast_mae_rps": 12.248908026798189, "forecast_rmse_rps": 15.549152872952133, "forecast_wape": 0.32207482075393756, "persistence_mae_rps": 9.1875, "forecast_targets": 16, "safe_rps": 14.4, "validity_warning": null}
+SAVED C:\Users\parth\Desktop\CS\ACC Lab CA\output\live\20261024T231509Z-kubernetes-flash-guarded_predictive-5ae1
