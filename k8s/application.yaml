@@ -1,0 +1,133 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: acc-lab
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker
+  namespace: acc-lab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: worker
+  template:
+    metadata:
+      labels:
+        app: worker
+    spec:
+      terminationGracePeriodSeconds: 8
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+      containers:
+        - name: worker
+          image: acc-scaler:lab
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          env:
+            - name: WORK_ITERATIONS
+              value: "60000"
+            - name: STARTUP_SECONDS
+              value: "5"
+          resources:
+            requests:
+              cpu: 250m
+              memory: 32Mi
+            limits:
+              cpu: 250m
+              memory: 96Mi
+          lifecycle:
+            preStop:
+              exec:
+                command: [python, -c, "import time; time.sleep(2)"]
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8080
+            periodSeconds: 1
+            failureThreshold: 2
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: [ALL]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: worker
+  namespace: acc-lab
+spec:
+  selector:
+    app: worker
+  ports:
+    - port: 8080
+      targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway
+  namespace: acc-lab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+      containers:
+        - name: gateway
+          image: acc-scaler:lab
+          imagePullPolicy: Never
+          command: [python, -m, scaler.gateway]
+          env:
+            - name: UPSTREAM
+              value: http://worker:8080
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              cpu: 100m
+              memory: 32Mi
+            limits:
+              cpu: 500m
+              memory: 128Mi
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            periodSeconds: 2
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: [ALL]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway
+  namespace: acc-lab
+spec:
+  selector:
+    app: gateway
+  ports:
+    - port: 8080
+      targetPort: 8080
