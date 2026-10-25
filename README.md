@@ -18,7 +18,7 @@ Use the safe rate reported by calibration when training on another machine. RunD
 
 The read-only viewer runs with `python -m scaler.viewer` at **http://127.0.0.1:8787**. Run it in another terminal while the demo runs.
 
-For a first look, open that viewer: it also shows the completed experiments without rerunning them. The implementation report is `output/ACC_Lab_CA_Implementation_Report.pdf`. The presentation in `output/presentation/ACC_Lab_CA_Final.pptx` covers the full demonstration with captured screenshots, results and speaker notes for all three members. The time-lapse is optional supporting footage.
+For a first look, open that viewer: it also shows the completed experiments without rerunning them. The implementation report is `output/ACC_Lab_CA_Implementation_Report.pdf`. The 18-slide presentation in `output/presentation/ACC_Lab_CA_Presentation.pptx` covers the demonstration with captured screenshots, ML methodology, results and speaker notes: Parth presents slides 1–6, Purab 7–12 and Pushkar 13–18. The time-lapse is optional supporting footage.
 
 To test recommendations without changing an existing lab deployment:
 
